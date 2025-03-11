@@ -7,8 +7,6 @@ import usersFromServer from './api/users';
 import categoriesFromServer from './api/categories';
 import productsFromServer from './api/products';
 
-const FILTER_USERS_ALL_NAME = 'all';
-
 const categories = categoriesFromServer.map(category => ({
   ...category,
   owner: usersFromServer.find(user => user.id === category.ownerId),
@@ -37,7 +35,7 @@ function filterGoods(goodsList, query, selectedUserId, selectedCategoryId) {
     goods = goods.filter(good => good.name.toLowerCase().includes(query));
   }
 
-  if (selectedUserId !== FILTER_USERS_ALL_NAME) {
+  if (selectedUserId) {
     goods = goods.filter(good => good.category.owner.id === selectedUserId);
   }
 
@@ -108,7 +106,7 @@ function prepareGoods(
 
 export const App = () => {
   const [query, setQuery] = useState('');
-  const [selectedUserId, setSelectedUserId] = useState(FILTER_USERS_ALL_NAME);
+  const [selectedUserId, setSelectedUserId] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState([]);
   const [sortBy, setSortBy] = useState('');
   const [reversed, setReversed] = useState(false);
@@ -152,7 +150,7 @@ export const App = () => {
 
   const handleFiltersClear = () => {
     handleCategoryClear();
-    handleUserSelect(FILTER_USERS_ALL_NAME);
+    handleUserSelect('');
     handleSearchClear();
   };
 
@@ -187,9 +185,9 @@ export const App = () => {
               <a
                 data-cy="FilterAllUsers"
                 href="#/"
-                onClick={() => handleUserSelect(FILTER_USERS_ALL_NAME)}
+                onClick={() => handleUserSelect('')}
                 className={classNames({
-                  'is-active': selectedUserId === FILTER_USERS_ALL_NAME,
+                  'is-active': !selectedUserId,
                 })}
               >
                 All
